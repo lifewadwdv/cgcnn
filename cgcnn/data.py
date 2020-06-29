@@ -11,9 +11,14 @@ import numpy as np
 import torch
 from pymatgen.core.structure import Structure
 from torch.utils.data import Dataset, DataLoader
-from torch.utils.data.dataloader import default_collate
+# from torch.utils.data.dataloader import default_collate
 from torch.utils.data.sampler import SubsetRandomSampler
-
+# from torch.utils.data.dataloader import
+# from torch import _utils
+# default_collate = _utils.collate.default_collate
+# default_collate = torch._utils.collate.default_collate
+import torch.utils.data._utils.collate as tc
+default_collate =tc.default_collate
 
 def get_train_val_test_loader(dataset, collate_fn=default_collate,
                               batch_size=64, train_ratio=None,
@@ -342,9 +347,12 @@ class CIFData(Dataset):
                 nbr_fea.append(list(map(lambda x: x[1],
                                         nbr[:self.max_num_nbr])))
         nbr_fea_idx, nbr_fea = np.array(nbr_fea_idx), np.array(nbr_fea)
+        nbr_fea_idx.astype(np.float64)
+        # test = np.array(nbr_fea_idx)
         nbr_fea = self.gdf.expand(nbr_fea)
         atom_fea = torch.Tensor(atom_fea)
         nbr_fea = torch.Tensor(nbr_fea)
-        nbr_fea_idx = torch.LongTensor(nbr_fea_idx)
+
+        nbr_fea_idx = torch.LongTensor(torch.from_numpy(nbr_fea_idx))
         target = torch.Tensor([float(target)])
         return (atom_fea, nbr_fea, nbr_fea_idx), target, cif_id

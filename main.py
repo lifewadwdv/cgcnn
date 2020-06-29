@@ -511,3 +511,4 @@ def adjust_learning_rate(optimizer, epoch, k):
 
 if __name__ == '__main__':
     main()
+    # "python main.py - -train - size 6 - -val - size 2 - -test - size 2 data / sample - regression"
